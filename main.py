@@ -33,11 +33,12 @@ def known_word():
 
 # Data
 try:
-    words = pandas.read_csv('data/You should review those words.csv.csv')
+    data = pandas.read_csv('data/You should review those words.csv')
 except FileNotFoundError:
-    words = pandas.read_csv('data/french_words.csv')
+    data = pandas.read_csv('data/french_words.csv')
 finally:
-    words = words.to_dict(orient="records")
+    words = data.to_dict(orient="records")
+
 # UX
 BACKGROUND_COLOR = "#B1DDC6"
 FONT_NAME = "Courier"
