@@ -4,11 +4,13 @@ import random
 # Buttons func
 SEC = 3000
 new_word = []
+learnt = []
 
 def next_word():
     global flip_timer, new_word
     root.after_cancel(flip_timer)
-    new_word = random.choice(words)
+    while new_word in learnt:
+       new_word = random.choice(words)
     canvas.itemconfig(canvas_image, image=card_front_img)
     canvas.itemconfig(canvas_title, text='French', fill='black')
     canvas.itemconfig(canvas_txt, text=new_word['French'], fill='black')
@@ -20,6 +22,12 @@ def translation():
     canvas.itemconfig(canvas_image, image=card_back_img)
     canvas.itemconfig(canvas_title, text='English', fill='white')
     canvas.itemconfig(canvas_txt, text=new_word['English'], fill='white')
+
+
+def word_I_know():
+    global new_word, learnt
+    learnt.append(new_word)
+    new_word()
 
 
 # Data
@@ -50,7 +58,7 @@ left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_CO
 left_button.grid(row=1, column=0)
 
 correct_img = PhotoImage(file="./images/right.png")
-left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=next_word)
+left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=word_I_know)
 left_button.grid(row=1, column=1)
 
 next_word()
