@@ -4,13 +4,13 @@ import random
 # Buttons func
 SEC = 3000
 new_word = []
-learnt = []
+missed = []
+
 
 def next_word():
     global flip_timer, new_word
     root.after_cancel(flip_timer)
-    while new_word in learnt:
-       new_word = random.choice(words)
+    new_word = random.choice(words)
     canvas.itemconfig(canvas_image, image=card_front_img)
     canvas.itemconfig(canvas_title, text='French', fill='black')
     canvas.itemconfig(canvas_txt, text=new_word['French'], fill='black')
@@ -24,11 +24,11 @@ def translation():
     canvas.itemconfig(canvas_txt, text=new_word['English'], fill='white')
 
 
-def word_I_know():
-    global new_word, learnt
-    learnt.append(new_word)
-    new_word()
-
+def known_word():
+    global new_word, missed
+    missed.append(new_word)
+    words.remove(new_word)
+    next_word()
 
 # Data
 words = pandas.read_csv('data/french_words.csv')
@@ -58,9 +58,11 @@ left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_CO
 left_button.grid(row=1, column=0)
 
 correct_img = PhotoImage(file="./images/right.png")
-left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=word_I_know)
+left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=known_word)
 left_button.grid(row=1, column=1)
 
 next_word()
-
+# File with words to learn
+new_data = pandas.DataFrame(missed)
+new_data.to_csv('You should review those words.csv', index=False)
 root.mainloop()
