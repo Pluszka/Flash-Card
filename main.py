@@ -4,7 +4,6 @@ import random
 # Buttons func
 SEC = 3000
 new_word = []
-missed = []
 
 
 def next_word():
@@ -25,14 +24,18 @@ def translation():
 
 
 def known_word():
-    global new_word, missed
-    missed.append(new_word)
+    global new_word
     words.remove(new_word)
     next_word()
 
+
 # Data
-words = pandas.read_csv('data/french_words.csv')
-words = words.to_dict(orient="records")
+try:
+    words = pandas.read_csv('data/You should review those words.csv.csv')
+except FileNotFoundError:
+    words = pandas.read_csv('data/french_words.csv')
+finally:
+    words = words.to_dict(orient="records")
 # UX
 
 BACKGROUND_COLOR = "#B1DDC6"
@@ -54,7 +57,7 @@ canvas_title = canvas.create_text(400, 130, text='Title', font=(FONT_NAME, 40, '
 canvas_txt = canvas.create_text(400, 263, text='Word', font=(FONT_NAME, 60, 'bold'))
 
 incorrect_img = PhotoImage(file="./images/wrong.png")
-left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=next_word)
+left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=new_word)
 left_button.grid(row=1, column=0)
 
 correct_img = PhotoImage(file="./images/right.png")
@@ -63,6 +66,6 @@ left_button.grid(row=1, column=1)
 
 next_word()
 # File with words to learn
-new_data = pandas.DataFrame(missed)
-new_data.to_csv('You should review those words.csv', index=False)
+new_data = pandas.DataFrame(words)
+new_data.to_csv('data/You should review those words.csv', index=False)
 root.mainloop()
