@@ -7,7 +7,7 @@ new_word = []
 
 
 def next_word():
-    global flip_timer, new_word
+    global flip_timer, new_word, words
     root.after_cancel(flip_timer)
     new_word = random.choice(words)
     canvas.itemconfig(canvas_image, image=card_front_img)
@@ -26,6 +26,8 @@ def translation():
 def known_word():
     global new_word
     words.remove(new_word)
+    new_data = pandas.DataFrame(words)
+    new_data.to_csv('data/You should review those words.csv', index=False)
     next_word()
 
 
@@ -37,7 +39,6 @@ except FileNotFoundError:
 finally:
     words = words.to_dict(orient="records")
 # UX
-
 BACKGROUND_COLOR = "#B1DDC6"
 FONT_NAME = "Courier"
 
@@ -57,7 +58,7 @@ canvas_title = canvas.create_text(400, 130, text='Title', font=(FONT_NAME, 40, '
 canvas_txt = canvas.create_text(400, 263, text='Word', font=(FONT_NAME, 60, 'bold'))
 
 incorrect_img = PhotoImage(file="./images/wrong.png")
-left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=new_word)
+left_button = Button(image=incorrect_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=next_word)
 left_button.grid(row=1, column=0)
 
 correct_img = PhotoImage(file="./images/right.png")
@@ -65,7 +66,5 @@ left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLO
 left_button.grid(row=1, column=1)
 
 next_word()
-# File with words to learn
-new_data = pandas.DataFrame(words)
-new_data.to_csv('data/You should review those words.csv', index=False)
+
 root.mainloop()
