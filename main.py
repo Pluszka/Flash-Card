@@ -2,11 +2,24 @@ from tkinter import *
 import pandas
 import random
 # Buttons func
+SEC = 3000
 
 def next_word():
-    new_word = random.choice(words)['French']
-    canvas.itemconfig(canvas_title, text='French')
-    canvas.itemconfig(canvas_txt, text=new_word)
+    new_word = random.choice(words)
+    canvas.itemconfig(canvas_image, image=card_front_img)
+    canvas.itemconfig(canvas_title, text='French', fill='black')
+    canvas.itemconfig(canvas_txt, text=new_word['French'], fill='black')
+    flip(new_word)
+
+
+def flip(choosen):
+    root.after(SEC, translation, choosen)
+
+
+def translation(choosen):
+    canvas.itemconfig(canvas_image, image=card_back_img)
+    canvas.itemconfig(canvas_title, text='English', fill='white')
+    canvas.itemconfig(canvas_txt, text=choosen['English'], fill='white')
 
 
 # Data
@@ -14,6 +27,7 @@ words = pandas.read_csv('data/french_words.csv')
 words = words.to_dict(orient="records")
 print(words)
 # UX
+
 BACKGROUND_COLOR = "#B1DDC6"
 FONT_NAME = "Courier"
 
@@ -22,8 +36,9 @@ root.title('Flashy')
 root.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
 
 canvas = Canvas(bg=BACKGROUND_COLOR, width=800, height=526)
+card_back_img = PhotoImage(file='./images/card_back.png')
 card_front_img = PhotoImage(file='./images/card_front.png')
-canvas.create_image(400, 263, image=card_front_img)
+canvas_image = canvas.create_image(400, 263, image=card_front_img)
 canvas.config(highlightthickness=0)
 canvas.grid(row=0, column=0, columnspan=2)
 canvas_title = canvas.create_text(400, 130, text='Title', font=(FONT_NAME, 40, 'italic'))
@@ -36,5 +51,7 @@ left_button.grid(row=1, column=0)
 correct_img = PhotoImage(file="./images/right.png")
 left_button = Button(image=correct_img, highlightthickness=0, bg=BACKGROUND_COLOR, command=next_word)
 left_button.grid(row=1, column=1)
+
+next_word()
 
 root.mainloop()
