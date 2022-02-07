@@ -3,29 +3,28 @@ import pandas
 import random
 # Buttons func
 SEC = 3000
+new_word = []
 
 def next_word():
+    global flip_timer, new_word
+    root.after_cancel(flip_timer)
     new_word = random.choice(words)
     canvas.itemconfig(canvas_image, image=card_front_img)
     canvas.itemconfig(canvas_title, text='French', fill='black')
     canvas.itemconfig(canvas_txt, text=new_word['French'], fill='black')
-    flip(new_word)
+    flip_timer = root.after(SEC, translation)
 
 
-def flip(choosen):
-    root.after(SEC, translation, choosen)
-
-
-def translation(choosen):
+def translation():
+    global new_word
     canvas.itemconfig(canvas_image, image=card_back_img)
     canvas.itemconfig(canvas_title, text='English', fill='white')
-    canvas.itemconfig(canvas_txt, text=choosen['English'], fill='white')
+    canvas.itemconfig(canvas_txt, text=new_word['English'], fill='white')
 
 
 # Data
 words = pandas.read_csv('data/french_words.csv')
 words = words.to_dict(orient="records")
-print(words)
 # UX
 
 BACKGROUND_COLOR = "#B1DDC6"
@@ -34,6 +33,8 @@ FONT_NAME = "Courier"
 root = Tk()
 root.title('Flashy')
 root.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
+
+flip_timer = root.after(SEC, translation)
 
 canvas = Canvas(bg=BACKGROUND_COLOR, width=800, height=526)
 card_back_img = PhotoImage(file='./images/card_back.png')
